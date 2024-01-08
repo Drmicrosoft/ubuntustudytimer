@@ -5,7 +5,7 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtMultimedia import QSound
 
-
+flag=1
 class MatrixEffect(QWidget):
     def __init__(self):
         super().__init__()
@@ -64,7 +64,7 @@ class TimerWindow(QDialog):
 		#self.setAttribute(Qt.WA_TranslucentBackground)  # Set the window as translucent
 
         self.timer_label = QLabel()
-        
+        self.nonosignature = QLabel()
 
         self.pause_button = QPushButton()
         self.pause_button.setIcon(QIcon.fromTheme("media-playback-pause"))  # Replace with desired icon
@@ -86,6 +86,9 @@ class TimerWindow(QDialog):
         timer_buttons_layout.addWidget(self.pause_button)
         timer_buttons_layout.addWidget(self.reset_button)
         timer_buttons_layout.addWidget(self.close_button)
+        timer_buttons_layout.addWidget(self.nonosignature)
+        
+        
 
         main_layout.addLayout(timer_buttons_layout)  # Add nested layout to the main layout
         main_layout.addStretch()  # Add stretchable space below the buttons
@@ -107,7 +110,16 @@ class TimerWindow(QDialog):
         self.timer.timeout.connect(self.update_timer)
         self.timer.start(1000)  # Update every 1 second
         self.close_button.clicked.connect(self.close_timer)
+        self.pause_button.clicked.connect(self.pause_timer)
+        self.reset_button.clicked.connect(self.reset_timer)
     def update_timer(self):
+		
+        global flag
+        if flag>0:self.nonosignature.setText(f"<span style='font-weight: bold; font-size: 14px;color:green;'>Nono was here :)");flag=0
+        else :			self.nonosignature.setText(f"<span style='font-weight: bold; font-size: 14px;color:yellow;'>Nono was here :)");flag=1
+
+
+			
         if self.is_studying:
             if self.study_time > 0:
                 self.timer_label.setText(f"Study Time: {self.study_time} sec")
@@ -127,8 +139,10 @@ class TimerWindow(QDialog):
 
     def pause_timer(self):
         if self.timer.isActive():
+            self.pause_button.setIcon(QIcon.fromTheme("media-playback-start"))
             self.timer.stop()
         else:
+            self.pause_button.setIcon(QIcon.fromTheme("media-playback-pause"))
             self.timer.start(1000)
 
     def reset_timer(self):
@@ -195,6 +209,7 @@ class TransparentTimer(QWidget):
         QSound.play("/home/nonososo/12.wav")
 
 def main():
+    flag=1
     app = QApplication(sys.argv)
     ex = TransparentTimer()
     ex.show()
